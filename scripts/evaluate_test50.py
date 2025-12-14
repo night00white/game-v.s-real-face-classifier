@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import csv
 import math
 from pathlib import Path
@@ -94,13 +95,18 @@ def create_grid_visualization(folder: Path, classifier: Classifier, output_path:
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Evaluate Test50 with a chosen model folder.')
+    parser.add_argument('--model-folder', type=str, default=None, help='Path to model folder (default: ./model)')
+    parser.add_argument('--output-dir', type=str, default=None, help='Output directory for CSVs and grids (default: ./outputs)')
+    args = parser.parse_args()
+
     SCRIPT_DIR = Path(__file__).parent
     BASE_DIR = SCRIPT_DIR.parent
     TEST_DATA_DIR = BASE_DIR / 'test_data' / 'Test50'
-    MODEL_DIR = BASE_DIR / 'model'
-    OUTPUT_DIR = BASE_DIR / 'outputs'
+    MODEL_DIR = Path(args.model_folder) if args.model_folder else (BASE_DIR / 'model')
+    OUTPUT_DIR = Path(args.output_dir) if args.output_dir else (BASE_DIR / 'outputs')
     OUTPUT_DIR.mkdir(exist_ok=True)
-    
+
     # Load model
     device = resolve_device()
     print(f"Device: {device}")

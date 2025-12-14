@@ -34,7 +34,7 @@ MAX_IMAGES = None
 RANDOM_DATA_ROTATIONS_DEG = 10
 RANDOM_DATA_RESIZE = (0.8, 1.0)
 
-MODEL_TYPE = 'resnet'
+MODEL_TYPE = 'vit_b_32'
 CONTINUE_TRAINING = False
 
 if __name__ == '__main__':
