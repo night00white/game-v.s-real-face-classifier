@@ -1,0 +1,1 @@
+{"model_type": "resnet", "class_to_idx": {"real": 0, "game": 1}, "training_loss": 0.23784445524215697, "training_accuracy": 0.93}

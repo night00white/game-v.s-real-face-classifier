@@ -13,16 +13,23 @@ game_real_classifier_complete/
 │   └── Test50/
 │       ├── test1/     # 31 test images (CG renders)
 │       └── test2/     # 25 test images (mix)
-├── model/             # Trained classifier weights
-│   ├── model.pth      # PyTorch model weights
-│   ├── model_traced.pt # TorchScript model (production-ready)
-│   └── params.json    # Model metadata
+├── model/             # Trained ViT weights (default)
+│   ├── model_weights.pth
+│   ├── model_traced.pt
+│   └── model_info.json
+├── model_resnet/      # Trained ResNet18 weights (optional alt)
+│   ├── model_weights.pth
+│   ├── model_traced.pt
+│   └── model_info.json
 ├── scripts/           # All training/testing scripts
 │   ├── classifier_helper.py              # Core classifier class
-│   ├── train_binary_game_detector.py     # Training script
+│   ├── train_binary_game_detector.py     # Train (default ViT)
+│   ├── train_vit_binary_game_detector.py # Train ViT explicitly
+│   ├── train_resnet_binary_game_detector.py # Train ResNet18
 │   ├── evaluate_test50.py               # Test50 evaluation + grids
 │   └── evaluate_real_dataset.py         # Flexible batch evaluation
-└── outputs/           # Generated results (CSVs and grid images)
+└── outputs/           # ViT evaluation results (CSVs and grids)
+    └── outputs_resnet/ # ResNet evaluation results
 ```
 
 ## Quick Start
@@ -40,36 +47,36 @@ pip install torch torchvision pillow matplotlib
 
 ### 1. Train the Classifier
 
-Train on real100 + game100 datasets (200 images total):
+Train on real100 + game100 (200 images total):
 
+- Default ViT (recommended, saves to `model/`):
 ```bash
 cd game_real_classifier_complete
-python scripts/train_binary_game_detector.py
+python scripts/train_vit_binary_game_detector.py
+```
+- ResNet18 alternative (saves to `model_resnet/`):
+```bash
+python scripts/train_resnet_binary_game_detector.py
 ```
 
-**Training Configuration:**
+**Training Configuration (both):**
 - Epochs: 25
 - Batch size: 128
-- Model: ResNet18 (pretrained on ImageNet)
 - Device: Auto-detect (CUDA → MPS → CPU)
 - Label mapping: `real=0`, `game=1` (enforced)
 
-The trained model is saved to `model/` folder.
-
 ### 2. Test on Test50 Dataset
 
-Run complete evaluation on test1 and test2 folders:
-
+- Using current ViT model (default):
 ```bash
 python scripts/evaluate_test50.py
 ```
+- Using ResNet model:
+```bash
+python scripts/evaluate_test50.py --model-folder ./model_resnet --output-dir ./outputs_resnet
+```
 
-This generates:
-- `outputs/test1_predictions.csv` - Predictions for test1
-- `outputs/test2_predictions.csv` - Predictions for test2
-- `outputs/test50_all_predictions.csv` - Combined results
-- `outputs/test1_grid.png` - Visualization grid for test1
-- `outputs/test2_grid.png` - Visualization grid for test2
+Generates CSVs + grids in the chosen output folder.
 
 ### 3. Single Image Inference
 
